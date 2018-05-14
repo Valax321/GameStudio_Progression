@@ -1,0 +1,17 @@
+Game about forcing yourself to live.
+
+Have to leave your house in the morning, start off just getting out of bed.
+
+Amount of tasks/gameplay increases over the course of the morning, before it is finally time to leave. It's an incremental game!
+
+If you do badly at living, you regress until you end up back in bed again.
+
+TASKS:
+- Make breakfast (toast and you can burn it)
+- Check phone
+- Shower
+- Brush teeth
+- Get out of bed
+- Pack bag
+
+For since you are late, you must manage all these simultaneously.
