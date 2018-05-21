@@ -1,226 +1,20 @@
-const CANVAS_SIZE = {x: 320, y: 240};
-var canvasScale = 1;
+const CANVAS_SIZE = {x: 640, y: 480};
+var resolutionScale = 1;
 
-const DrawMode = {
-    DRAWMODE_NONE: -9999,
-    DRAWMODE_STATIC: -1000,
-    DRAWMODE_DYNAMIC: -100,
-    DRAWMODE_PLAYER: 0
-};
+var assets = {};
 
-const UpdateMode = {
-    UPDATEMODE_NONE: -9999,
-    UPDATEMODE_PRE_PLAYER: -1000,
-    UPDATEMODE_PLAYER: 0,
-    UPDATEMODE_POST_PLAYER: 1000
-};
+var gameState = 0;
 
-var input = {
-    up: false,
-    down: false,
-    left: false,
-    right: false,
-    use: false
-};
+var mousePressedLastFrame = false;
+var mousePressedThisFrame = false;
+
+var inkStory;
+var lastText = "";
+var pauseStory = false;
 
 function deltaTime()
 {
     return 1 / (frameRate() == 0 ? 0.016667 : frameRate()); //Estimate 60fps if we read 0
-}
-
-class Camera
-{
-    constructor(trackTarget)
-    {
-        this.trackTarget = trackTarget;
-        this.updateMode = UpdateMode.UPDATEMODE_POST_PLAYER;
-        this.drawMode = DrawMode.DRAWMODE_NONE;
-    }
-
-    update()
-    {
-
-    }
-}
-
-// This is an object so we don't need to worry about resetting the global state to restart the game.
-// We can just remove the old world state and create a new instance to restart the game this way.
-class GameWorld
-{
-    constructor(mapPath)
-    {
-        this.hasLoaded = false;
-        this.entities = {};
-        this.assets = {};
-        loadJSON(mapPath, function(data) {
-            this.mapData = data;
-        }, function(error) {
-            console.error("ERROR LOADING MAP DATA JSON FILE: %s", error);
-        });
-    }
-
-    calcAssetReferenceCount()
-    {
-
-    }
-
-    ents2UpdateList()
-    {
-        var updateList = [];
-
-        for (var ent in this.entities)
-        {
-            if (this.entities.hasOwnProperty(ent))
-            {
-                if (this.entities[ent].updateMode != UpdateMode.UPDATEMODE_NONE)
-                {
-                    updateList.push(this.entities[ent]);
-                }
-            }
-        }
-
-        updateList.sort(function(a, b) {
-            if (a.updateLayer < b.updateLayer) return -1;
-            if (a.updateLayer == b.updateLayer) return 0;
-            else return 1;
-        });
-
-        return updateList;
-    }
-
-    ents2DrawList()
-    {
-        var drawList = [];
-
-        for (var ent in this.entities)
-        {
-            if (this.entities.hasOwnProperty(ent))
-            {
-                if (this.entities[ent].drawMode != DrawMode.DRAWMODE_NONE)
-                {
-                    drawList.push(this.entities[ent]);
-                }
-            }
-        }
-
-        drawList.sort(function(a, b) {
-            if (a.drawLayer < b.drawLayer) return -1;
-            else if (a.drawLayer == b.drawLayer) return 0;
-            else return 1;
-        });
-
-        return drawList;
-    }
-
-    spawnEntity(entName, entClass, props)
-    {
-        var ent = new classDef[entClass](name, props);
-        if (ent != undefined)
-        {
-            this.entities[entName] = ent; //Assign the entity
-            return ent;
-        }
-        else
-        {
-            console.error("Undefined entity class %s", entClass);
-            return null;
-        }
-    }
-
-    update()
-    {
-        var entList = ents2UpdateList();
-
-        for (var i = 0; i < entList.length; i++)
-        {
-            var ent = entList[i];
-            ent.update();
-        }
-    }
-
-    draw()
-    {
-        var drawList = ents2DrawList();
-
-        for (var i = 0; i < drawList.length; i++)
-        {
-            var ent = entList[i];
-            ent.draw();
-        }
-    }
-}
-
-class PlayerCharacter
-{
-    constructor(name, props)
-    {
-        this.updateLayer = -1000;
-        this.position = createVector(props.startPos.x, props.startPos.y); //Needs to be changed to where the bed is, or load from a file.
-    }
-
-    update()
-    {
-
-    }
-
-    draw()
-    {
-
-    }
-}
-
-var classDef = {
-    PlayerCharacter
-};
-
-var currentWorld = null;
-
-function keyPressed()
-{
-    switch (keyCode)
-    {
-        case LEFT_ARROW:
-            input.left = true;
-            break;
-        case RIGHT_ARROW:
-            input.right = true;
-            break;
-        case UP_ARROW:
-            input.up = true;
-            break;
-        case DOWN_ARROW:
-            input.down = true;
-            break;
-        case 0x20: //SPACEBAR
-            input.use = true;
-            break;
-    }
-
-    return false;
-}
-
-function keyReleased()
-{
-    switch (keyCode)
-    {
-        case LEFT_ARROW:
-            input.left = false;
-            break;
-        case RIGHT_ARROW:
-            input.right = false;
-            break;
-        case UP_ARROW:
-            input.up = false;
-            break;
-        case DOWN_ARROW:
-            input.down = false;
-            break;
-        case 0x20: //SPACEBAR
-            input.use = false;
-            break;
-    }
-
-    return false;
 }
 
 function setCanvasSize()
@@ -245,13 +39,122 @@ function windowResized()
     resizeCanvas(CANVAS_SIZE.x * resolutionScale, CANVAS_SIZE.y * resolutionScale);
 }
 
+// By some 'miracle', p5.js doesn't have a way to load a text file as a single string, only as an array split per line.
+// The person who decided this was a good idea was wrong. Very VERY wrong.
+function loadStory(path)
+{
+    var text = loadStrings(path);
+    var str = "";
+    for (var i = 0; i < text.length; i++)
+    {
+        str += text[i];
+    }
+
+    return str;
+}
+
 function preload()
 {
-    //NOTE: only load instantly needed assets as we can async load the rest when we open the map.
+    assets.background = loadImage("assets/background/paper_background.png");
+    assets.menuBackground = loadImage("assets/background/paper_background_menu.png");
+    assets.font = loadFont("assets/OvertheRainbow.ttf");
+    inkStory = new inkjs.Story(storyContent);
+}
+
+function resumeStory()
+{
+    pauseStory = false;
+    lastText = "";
+}
+
+function drawButton(txt, x, y, w, h, hoverColor, pressedColor)
+{
+    push();
+    noStroke();
+    var pressed = false;
+    var mx = mouseX / resolutionScale;
+    var my = mouseY / resolutionScale;
+    if (collidePointRect(mx, my, x, y, w, h))
+    {
+        pressed = !mousePressedThisFrame && mousePressedLastFrame;
+
+        if (mouseIsPressed)
+        {
+            push();
+            fill(pressedColor);
+            rect(x, y, w, h);
+            pop();
+        }
+        else
+        {
+            push();
+            fill(hoverColor);
+            rect(x, y, w, h);
+            pop();
+        }
+    }
+
+    textAlign(CENTER);
+    textSize(16);
+    text(txt, x, y, w, h);
+
+    pop();
+
+    return pressed;
+}
+
+function drawStory()
+{
+    image(assets.background, 0, 0);
+    while(inkStory.canContinue && !pauseStory)
+    {
+        var newLine = inkStory.Continue();
+        if (newLine.length > 0 && newLine[0] == '%')
+        {
+            
+        }
+        else
+        {
+            lastText += newLine;
+        }
+        if (inkStory.currentTags.includes("pause")) pauseStory = true;
+    }
+    text(lastText, 24, 18, CANVAS_SIZE.x - 24, CANVAS_SIZE.y - 18);
+
+    if (pauseStory)
+    {
+        if (drawButton("Continue >", 500, 420, 100, 30, 'rgba(81, 76, 70, 0.5)', 'rgba(81, 76, 70, 0.8)'))
+        {
+            resumeStory();
+        }
+    }
 }
 
 function draw()
 {
     background(0);
-    
+    textFont(assets.font);
+    textSize(20);
+    push();
+    scale(resolutionScale);
+    mousePressedThisFrame = mouseIsPressed;
+    if (gameState == 0)
+    {
+        push();
+        textAlign(CENTER);
+        image(assets.menuBackground, 0, 0);
+        text("Travels", 0, CANVAS_SIZE.y / 2, CANVAS_SIZE.x);
+        var pressed = drawButton("Begin", (CANVAS_SIZE.x / 2) - 40, (CANVAS_SIZE.y / 2) + 20, 80, 30, 'rgba(0, 255, 0, 0.5)', 'rgba(0, 100, 0, 0.5)');
+        if (pressed)
+        {
+            gameState = 1;
+        }
+    }
+    else if (gameState == 1)
+    {
+        drawStory();
+    }
+    pop();
+
+    mousePressedLastFrame = mousePressedThisFrame;
 }
