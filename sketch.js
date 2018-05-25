@@ -12,6 +12,12 @@ var inkStory;
 var lastText = "";
 var pauseStory = false;
 
+var currentIllustrstion;
+var illustrationLoaded = false;
+var illustrationPosition;
+
+var debugGraphicPlacer = false;
+
 function deltaTime()
 {
     return 1 / (frameRate() == 0 ? 0.016667 : frameRate()); //Estimate 60fps if we read 0
@@ -30,7 +36,7 @@ function setup()
     frameRate(60);
     var canvas = createCanvas(CANVAS_SIZE.x * resolutionScale, CANVAS_SIZE.y * resolutionScale).elt;
     var ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
+    //ctx.imageSmoothingEnabled = false;
 }
 
 function windowResized()
@@ -65,6 +71,7 @@ function resumeStory()
 {
     pauseStory = false;
     lastText = "";
+    illustrationLoaded = false;
 }
 
 function drawButton(txt, x, y, w, h, hoverColor, pressedColor)
@@ -111,7 +118,17 @@ function drawStory()
         var newLine = inkStory.Continue();
         if (newLine.length > 0 && newLine[0] == '%')
         {
-            
+            var cmd = newLine.split(":");
+            var args = cmd[1].trim().split(",");
+            if (cmd[0] == "%drawGraphic")
+            {
+                illustrationLoaded = false;
+                loadImage(args[0].trim(), function(img) {
+                    currentIllustrstion = img;
+                    illustrationLoaded = true;
+                    illustrationPosition = createVector(parseInt(args[1].trim()), parseInt(args[2].trim()));
+                });
+            }
         }
         else
         {
@@ -119,7 +136,28 @@ function drawStory()
         }
         if (inkStory.currentTags.includes("pause")) pauseStory = true;
     }
+
     text(lastText, 24, 18, CANVAS_SIZE.x - 24, CANVAS_SIZE.y - 18);
+
+    if (inkStory.currentChoices.length > 0 && !pauseStory)
+    {
+        var startY = 300;
+        for (var i = 0; i < inkStory.currentChoices.length; i++)
+        {
+            //console.log(inkStory.currentChoices[i]);
+            var pressed = drawButton(inkStory.currentChoices[i].text, (CANVAS_SIZE.x / 2) - 100, startY, 200, 30, 'rgba(81, 76, 70, 0.5)', 'rgba(81, 76, 70, 0.8)');
+            startY += 35;
+            if (pressed)
+            {
+                inkStory.ChooseChoiceIndex(i);
+            }
+        }
+    }
+
+    if (illustrationLoaded)
+    {
+        image(currentIllustrstion, illustrationPosition.x, illustrationPosition.y);
+    }
 
     if (pauseStory)
     {
@@ -127,6 +165,54 @@ function drawStory()
         {
             resumeStory();
         }
+
+        if (drawButton("Inventory", 50, 420, 100, 30, 'rgba(81, 76, 70, 0.5)', 'rgba(81, 76, 70, 0.8)'))
+        {
+            gameState = 2;
+        }
+    }
+}
+
+function drawInventory()
+{
+    image(assets.menuBackground, 0, 0);
+
+    push();
+    textAlign(CENTER);
+    text("Inventory", 0, 20, CANVAS_SIZE.x, 30);
+    pop();
+
+    var items = inkStory.variablesState.$("currentInventory");
+    var itemCount = items.Count;
+    console.log(items);
+    var itemArray = [];
+    for (var itemPropName in items._keys)
+    {
+        if (items._keys.hasOwnProperty(itemPropName))
+        {
+            itemArray.push(items._keys[itemPropName].itemName);
+        }
+    }
+
+    var columns = max(floor(itemCount / 10), 1);
+
+    var totalItemPrintCount = 0;
+    for (var c = 0; c < columns; c++)
+    {
+        var columnTotal = 0;
+        var columnY = 50;
+        while (totalItemPrintCount < itemCount && columnTotal < 10)
+        {
+            text(itemArray[itemCount], (c * 100) + 25, columnY);
+            columnY += 30;
+            columnTotal++;
+            totalItemPrintCount++;
+        }
+    }
+
+    if (drawButton("Back", (CANVAS_SIZE.x / 2) - 50, 420, 100, 30, 'rgba(81, 76, 70, 0.5)', 'rgba(81, 76, 70, 0.8)'))
+    {
+        gameState = 1;
     }
 }
 
@@ -154,7 +240,31 @@ function draw()
     {
         drawStory();
     }
+    else if (gameState == 2)
+    {
+        drawInventory();
+    }
+
+    if (debugGraphicPlacer)
+    {
+        push();
+        var mx = mouseX / resolutionScale;
+        var my = mouseY / resolutionScale;
+        textFont("Arial");
+        text("x: " + mx.toFixed(0), mx + 20, my + 20);
+        text("y: " + my.toFixed(0), mx + 20, my + 40);
+        pop();
+    }
+
     pop();
 
     mousePressedLastFrame = mousePressedThisFrame;
+}
+
+function keyTyped()
+{
+    if (key == ' ')
+    {
+        debugGraphicPlacer = !debugGraphicPlacer;
+    }
 }
