@@ -1,6 +1,6 @@
-LIST inventoryItems = Waterbottle, Rope
+LIST inventoryItems = WaterbottleFull, WaterbottleHalf, WaterbottleEmpty, Rope, CarvedToy, Torch
 
-VAR currentInventory = (Waterbottle, Rope)
+VAR currentInventory = (WaterbottleFull, Rope, CarvedToy, Torch)
 
 === function check_inventory(itemName)
 {

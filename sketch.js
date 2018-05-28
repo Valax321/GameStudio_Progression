@@ -30,6 +30,39 @@ function setCanvasSize()
     resolutionScale = min(sx, sy);
 }
 
+function saveGameData(jsonString)
+{
+    if (typeof(Storage) !== "undefined")
+    {
+        localStorage.storyProgress = LZString.compress(jsonString);
+    }
+    else
+    {
+        console.error("Could not save because the browser doesn't support localStorage.");
+    }
+}
+
+function loadGameData()
+{
+    if (typeof(Storage) !== "undefined")
+    {
+        return LZString.decompress(localStorage.storyProgress);
+    }
+    else
+    {
+        return undefined;
+    }
+}
+
+function hasSaveData()
+{
+    if (typeof(Storage) !== "undefined")
+    {
+        return localStorage.storyProgress != undefined;
+    }
+    else return false;
+}
+
 function setup()
 {
     setCanvasSize();
@@ -64,11 +97,13 @@ function preload()
     assets.background = loadImage("assets/background/paper_background.png");
     assets.menuBackground = loadImage("assets/background/paper_background_menu.png");
     assets.font = loadFont("assets/OvertheRainbow.ttf");
+    assets.itemTable = loadJSON("assets/items.json");
     inkStory = new inkjs.Story(storyContent);
 }
 
 function resumeStory()
 {
+    saveGameData(inkStory.state.toJson());
     pauseStory = false;
     lastText = "";
     illustrationLoaded = false;
@@ -127,6 +162,9 @@ function drawStory()
                     currentIllustrstion = img;
                     illustrationLoaded = true;
                     illustrationPosition = createVector(parseInt(args[1].trim()), parseInt(args[2].trim()));
+                },
+                function(err) {
+                    console.error("Error loading story graphic! %s", err);
                 });
             }
         }
@@ -149,6 +187,7 @@ function drawStory()
             startY += 35;
             if (pressed)
             {
+                lastText = "";
                 inkStory.ChooseChoiceIndex(i);
             }
         }
@@ -173,6 +212,8 @@ function drawStory()
     }
 }
 
+var invSelectedItem;
+var invMode = 0;
 function drawInventory()
 {
     image(assets.menuBackground, 0, 0);
@@ -184,7 +225,7 @@ function drawInventory()
 
     var items = inkStory.variablesState.$("currentInventory");
     var itemCount = items.Count;
-    console.log(items);
+    //console.log(items);
     var itemArray = [];
     for (var itemPropName in items._keys)
     {
@@ -200,10 +241,11 @@ function drawInventory()
     for (var c = 0; c < columns; c++)
     {
         var columnTotal = 0;
-        var columnY = 50;
+        var columnY = 75;
         while (totalItemPrintCount < itemCount && columnTotal < 10)
         {
-            text(itemArray[itemCount], (c * 100) + 25, columnY);
+            var item = assets.itemTable[itemArray[totalItemPrintCount]];
+            text(item.name, (c * 100) + 75, columnY);
             columnY += 30;
             columnTotal++;
             totalItemPrintCount++;
@@ -231,6 +273,10 @@ function draw()
         image(assets.menuBackground, 0, 0);
         text("Travels", 0, CANVAS_SIZE.y / 2, CANVAS_SIZE.x);
         var pressed = drawButton("Begin", (CANVAS_SIZE.x / 2) - 40, (CANVAS_SIZE.y / 2) + 20, 80, 30, 'rgba(0, 255, 0, 0.5)', 'rgba(0, 100, 0, 0.5)');
+        if (hasSaveData())
+        {
+            var pressedLoad = drawButton("Resume", (CANVAS_SIZE.x / 2) - 40, (CANVAS_SIZE.y / 2) + 50, 80, 30, 'rgba(0, 255, 0, 0.5)', 'rgba(0, 100, 0, 0.5)');
+        }
         if (pressed)
         {
             gameState = 1;

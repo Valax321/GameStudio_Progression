@@ -1,0 +1,26 @@
+{
+    "WaterbottleFull": {
+        "name": "Water Bottle (Full)",
+        "description": "A stone bottle, full of water."
+    },
+    "WaterbottleHalf": {
+        "name": "Water Bottle (Half-Full)",
+        "description": "A stone bottle, half-filled with water."
+    },
+    "WaterbottleEmpty": {
+        "name": "Water Bottle (Empty)",
+        "description": "A stone bottle, completely empty."
+    },
+    "Rope": {
+        "name": "Old Rope",
+        "description": "About 10m of old fibre rope. It looks weak."
+    },
+    "CarvedToy": {
+        "name": "Carved Half-Light Toy",
+        "description": "A toy carved from wood depicting a half-light. The creatures digust me, but the item still holds sentimental value."
+    },
+    "Torch": {
+        "name": "Glow Rod",
+        "description": "A glowing crystal rod. I can use it for illumination. This one is the common type: has a deep red tint."
+    }
+}
