@@ -1,4 +1,7 @@
 INCLUDE inventory.ink
 INCLUDE city.ink
-->city ->
+INCLUDE station.ink
+
+-> city ->
+-> crossroads ->
 -> END

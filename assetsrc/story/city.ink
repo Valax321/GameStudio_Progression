@@ -22,11 +22,16 @@ The station appeared to be empty: not even a train was stopped here. They must b
 I stepped down onto the coarse gravel and stood beside the tracks.  # pause
 All I could occupy myself with while waiting was staring down the tunnel and out into the darkness in which we were forbidden to go by foot. The train tunnels were not a place for humanity, and the trains were the only force that kept us safe while travelling them. Even when safe, the sounds of metallic groaning and scrapes coming from the earth itself disturbed even the strongest willed of us in transit. We were happy once we could stop using trains. # pause
 I cannot recall how long I waited, but it felt like hours. The Great Spotlight had progressed to a more orange tint when I saw the bright white headlight beams of a train in the tunnel ahead. Initially I felt some limited joy, but that quickly faded at the sight of a small flatbed train pulling to a stop in front of me. Of course, they sent a cargo train. # pause
-It was still better than waiting some more, and certainly better than going on foot. I picked my bag back up and climbed the steps, before finally taking a seat among the crates and boxes the small train was carrying. As soon as I was seated, we accelerated on down the tunnel and I attempted to ignore the noise of unseen mechanical horrors working just outside my vision. # pause
 -> on_train
 = station_dark
-
+Movement was slow through the station, and a rising discomfort began emerging from deeper within. I edged my way along the outer wall until I found a pillar, a sign that I had reached the middle of the station. From here I turned and forced myself onwards into the darkness, encountering a small drop below. Down here was the ballast of the railway tracks, where people used to wait to catch the trains.
+TODO: more here
 -> on_train
 = on_train
-
+%drawGraphic: assets/graphics/train_bored.png, 100, 100
+It was still better than waiting some more, and certainly better than going on foot. I picked my bag back up and climbed the steps, before finally taking a seat among the crates and boxes the small train was carrying. As soon as I was seated, we accelerated on down the tunnel and I attempted to ignore the noise of unseen mechanical horrors working just outside my vision. # pause
+There was little to do while we moved down the tunnel, and I found myself parched and hungry. While I had no food, I did have my water bottle, from which I drank half the liquid and felt somewhat better. After that, there was little to do but rest.
+~ remove_inventory(WaterbottleFull)
+~ add_inventory(WaterbottleHalf)
+%drawGraphic: assets/graphics/train_bored2.png, 100, 100 # pause
 ->->

@@ -1,0 +1,40 @@
+{
+  "name": "travels",
+  "version": "1.0.0",
+  "description": "Travels",
+  "main": "main.js",
+  "build": {
+    "appId": "com.whilefalsestudios.travel",
+    "artifactName": "${productName}.${ext}",
+    "mac": {
+      "category": "public.app-category.games"
+    },
+    "win": {
+      "target": "portable"
+    },
+    "files": [
+      "assets/**",
+      "libraries/*",
+      "index.html",
+      "sketch.js",
+      "main.js",
+      "!**/node_modules/**",
+      "!package.json"
+    ]
+  },
+  "scripts": {
+    "test": "electron .",
+    "dist": "electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://bitbucket.org/Valax321/gamestudio_progression.git"
+  },
+  "author": "Andrew Castillo",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/Valax321/gamestudio_progression#readme",
+  "devDependencies": {
+    "electron": "^1.8.4",
+    "electron-builder": "^20.8.1"
+  }
+}

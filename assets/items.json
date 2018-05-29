@@ -22,5 +22,13 @@
     "Torch": {
         "name": "Glow Rod",
         "description": "A glowing crystal rod. I can use it for illumination. This one is the common type: has a deep red tint."
+    },
+    "Food": {
+        "name": "Canned Food",
+        "description": "Several cans of rather tasty cured fish."
+    },
+    "SleepingBag": {
+        "name": "Shielded Sleeping Bag",
+        "description": "A sleeping bag with neurological shielding. The old man at the crossroads insisted it would be vital out in the wilderness at night."
     }
 }

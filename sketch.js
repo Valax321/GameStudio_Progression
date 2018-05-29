@@ -25,8 +25,10 @@ function deltaTime()
 
 function setCanvasSize()
 {
-    var sx = floor(windowWidth / CANVAS_SIZE.x);
-    var sy = floor(windowHeight / CANVAS_SIZE.y);
+    // var sx = floor(windowWidth / CANVAS_SIZE.x);
+    // var sy = floor(windowHeight / CANVAS_SIZE.y);
+    var sx = (windowWidth / CANVAS_SIZE.x);
+    var sy = (windowHeight / CANVAS_SIZE.y);
     resolutionScale = min(sx, sy);
 }
 
@@ -162,9 +164,6 @@ function drawStory()
                     currentIllustrstion = img;
                     illustrationLoaded = true;
                     illustrationPosition = createVector(parseInt(args[1].trim()), parseInt(args[2].trim()));
-                },
-                function(err) {
-                    console.error("Error loading story graphic! %s", err);
                 });
             }
         }
@@ -183,7 +182,8 @@ function drawStory()
         for (var i = 0; i < inkStory.currentChoices.length; i++)
         {
             //console.log(inkStory.currentChoices[i]);
-            var pressed = drawButton(inkStory.currentChoices[i].text, (CANVAS_SIZE.x / 2) - 100, startY, 200, 30, 'rgba(81, 76, 70, 0.5)', 'rgba(81, 76, 70, 0.8)');
+            var width = textWidth(inkStory.currentChoices[i].text) + 20;
+            var pressed = drawButton(inkStory.currentChoices[i].text, (CANVAS_SIZE.x / 2) - (width / 2), startY, width, 30, 'rgba(81, 76, 70, 0.5)', 'rgba(81, 76, 70, 0.8)');
             startY += 35;
             if (pressed)
             {
@@ -281,6 +281,7 @@ function draw()
         {
             gameState = 1;
         }
+        pop();
     }
     else if (gameState == 1)
     {

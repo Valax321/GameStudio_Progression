@@ -1,4 +1,4 @@
-LIST inventoryItems = WaterbottleFull, WaterbottleHalf, WaterbottleEmpty, Rope, CarvedToy, Torch
+LIST inventoryItems = WaterbottleFull, WaterbottleHalf, WaterbottleEmpty, Rope, CarvedToy, Torch, Food, SleepingBag
 
 VAR currentInventory = (WaterbottleFull, Rope, CarvedToy, Torch)
 
