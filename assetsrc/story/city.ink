@@ -3,8 +3,8 @@
 The screams of millions could be heard for miles. As soon as the electricity went out for the last time the suffering started and continued without respite. It seemed random; men, women and children screaming in... agony? Fear? The rest of us did not know. What I did know however was that it was time for me to leave. I packed what little I could carry into a bag and left my family writhing and whimpering on the floor. # pause
 %drawGraphic: assets/graphics/city_scene.png, 100, 100
 The City always disgusted me. Vast towers of flat grey rock stretching to impossible heights; plains of concrete of unknown purpose twisted and melting between the towers and places unseen. I never figured out if it was just me, or if everyone else felt this way too. Maybe screaming was not such an unusual reaction after all. # pause
-%drawGraphic: assets/graphics/train_thought.png, 100, 100
 I spent time just walking down the streets, considering what to do with myself. Getting free of this place was essential. The best way to do that was by train. That meant going underground. # pause
+%drawGraphic: assets/graphics/garbage_crush.png, 41, 188
 One distinct scream could be heard emanating from the steps down to the station. On approach I encountered a man, presumably afflicted with the screaming from the absent look in his eyes. It was not immediately clear however, given that he had managed to pin his leg under one of the heavy stone garbage bins that fell over.
 * [I helped the man.]The bin was heavy but it was possible to roll it to the side. The leg was crushed and twisted at an impossible angle, but removing the bin made no change to the man's behaviour: he continued screaming uninterrupted, now able to writhe even more violently. What could they be experiencing to make such physical trauma meaningless in comparison? # pause
     -> done_helping

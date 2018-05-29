@@ -204,11 +204,11 @@ function drawStory()
         {
             resumeStory();
         }
+    }
 
-        if (drawButton("Inventory", 50, 420, 100, 30, 'rgba(81, 76, 70, 0.5)', 'rgba(81, 76, 70, 0.8)'))
-        {
-            gameState = 2;
-        }
+    if (drawButton("Inventory", 50, 420, 100, 30, 'rgba(81, 76, 70, 0.5)', 'rgba(81, 76, 70, 0.8)'))
+    {
+        gameState = 2;
     }
 }
 
